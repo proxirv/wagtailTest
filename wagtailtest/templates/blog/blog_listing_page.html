@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% load static wagtailcore_tags wagtailuserbar wagtailimages_tags %}
+
+{% block content %}
+    {{ self.title }}
+    {{ posts.title }}
+    {{ post.title }}
+    <br>
+    {% for post in posts %}
+        2
+        <h3></h3>
+        {% image self.blog_image fill-300x200 as img %}
+        <img class="img-fluid rounded-start" src="{{ img.url }}" alt="{{ img.alt }}">
+        <br>
+    {% endfor %}
+{% endblock %}
