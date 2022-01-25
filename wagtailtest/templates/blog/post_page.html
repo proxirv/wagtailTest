@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailuserbar wagtailimages_tags %}
+
+
+{% block content %}
+  {% image page.specific.image fill-300x200 as img %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ page.title }}</h5>
+      <h6 class="card-subtitle text-muted">{{ page.text | richtext }}</h6>
+    </div>
+    <img src="{{ img.url }}" class="img-fluid rounded-start" alt="{{ img.alt }}">
+    <div class="card-body">
+      {% include 'streams/image_blog.html' %}
+      <p class="card-text">{{ page.summary }}</p>
+    </div>
+    <p><a href="{{ page.get_parent.url }}">Return to blog<a></p>
+  </div>
+{% endblock content %}

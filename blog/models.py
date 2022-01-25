@@ -1,4 +1,5 @@
 from django.db import models
+"""from wagtail.core import blocks"""
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page,Orderable
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -10,16 +11,13 @@ from wagtail.admin.edit_handlers import (
     InlinePanel,
     StreamFieldPanel,
 )
-from django.shortcuts import render
-from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from streams import blocks
 from modelcluster.fields import ParentalKey
+from streams import blocks 
 
 class BlogCategoriesOrderable(Orderable):
     """This allows us to select one or more blog authors from Snippets."""
 
-    page = ParentalKey("blog.BlogDetailPage", related_name="blog_categories_article",null=True)
-    auxpage = ParentalKey("blog.BlogListingPage", related_name="blog_categories_listing",null=True)
+    page = ParentalKey("blog.PostPage", related_name="blog_categories",null=True)
     categories = models.ForeignKey(
         "blog.BlogCategories",
         on_delete=models.CASCADE,
@@ -39,7 +37,7 @@ class BlogCategories(models.Model):
             [
                 FieldPanel("categories"),
             ],
-            heading="Categories of Article",
+            heading="Categorie(s)",
         )
     ]
 
@@ -53,40 +51,35 @@ class BlogCategories(models.Model):
 
 register_snippet(BlogCategories)
 
-class BlogListingPage(Page):
-    """Listing page lists all the Blog Detail Pages."""
-
-    template = "blog/blog_listing_page.html"
-
-    blog_image = models.ForeignKey(
-        "wagtailimages.Image",
+class BlogPage(Page):
+    titlearticles = models.CharField(
+        max_length=100,
         blank=True,
         null=True,
-        related_name="+",
-        on_delete=models.SET_NULL,
     )
-
     content_panels = Page.content_panels + [
-        ImageChooserPanel("blog_image"),
+        FieldPanel("titlearticles", classname="full"),
     ]
 
-    def get_context(self, request, *args, **kwargs):
-        """Adding custom stuff to our context."""
-        context = super().get_context(request, *args, **kwargs)
-        context["posts"] = BlogDetailPage.objects.live().public()
-        return context
-
-class BlogDetailPage(Page):
-    """Blog detail page."""
-    
-    blog_image = models.ForeignKey(
-        "wagtailimages.Image",
+class PostPage(Page):
+    custontitle = models.CharField(
+        max_length=100,
         blank=True,
         null=True,
-        related_name="+",
-        on_delete=models.SET_NULL,
     )
-    contentt = StreamField(
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    text = RichTextField(
+        max_length=250,
+        blank=True,
+        null=True,
+    )
+    summary = StreamField(
         [
             ("text_blog",blocks.RichtextBlog()),
             ("image_blog",blocks.imageBlog()),
@@ -94,8 +87,15 @@ class BlogDetailPage(Page):
         null=True,
         blank=True,
     )
-
     content_panels = Page.content_panels + [
-        ImageChooserPanel("blog_image"),
-        StreamFieldPanel("contentt"),
+        FieldPanel("custontitle"),
+        FieldPanel("text"),
+        ImageChooserPanel("image"),
+        StreamFieldPanel("summary"),
+        MultiFieldPanel(
+            [
+                InlinePanel("blog_categories", label="categorie", min_num=1, max_num=3),
+            ],
+            heading="Categorie(s)",
+        ),
     ]

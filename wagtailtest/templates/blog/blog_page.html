@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailuserbar wagtailimages_tags %}
+{% block content %}
+  <h1>{{ page.titlearticles }}</h1>
+  <br>
+  {% for post in page.get_children %}
+    <h3></h3>
+      {% image post.specific.image fill-300x200 as img %}
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="{{ img.url }}" class="img-fluid rounded-start" alt="{{ img.alt }}">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h4 class="card-title"><a href="{% pageurl post %}">{{ post.specific.custontitle }}</a></h5>
+              <p class="card-text">{{ post.specific.text | richtext }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+  {% endfor %}
+{% endblock %}
+
+
