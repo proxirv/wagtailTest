@@ -2,10 +2,11 @@
 
 {% load wagtailcore_tags wagtailuserbar wagtailimages_tags %}
 {% block content %}
+  <div class="text-center">
   <h1>{{ page.titlearticles }}</h1>
   <br>
   {% for post in page.get_children %}
-    <h3></h3>
+    <div class="text-center">
       {% image post.specific.image fill-300x200 as img %}
       <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
@@ -20,6 +21,8 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
   {% endfor %}
 {% endblock %}
 
